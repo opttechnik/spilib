@@ -1,4 +1,4 @@
-# SPI library
+# ~~SPI library~~ (in development)
 
 Implementation of the SPI protocol on digital I/O pins for various hardware plattforms.
 

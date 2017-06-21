@@ -46,15 +46,16 @@ int sleep_ns(size_t time) {
  * @brief Initialize SPI bus and create related SPI object for access
  * to the bus
  *
- * @param mosi  The number of the digital MOSI-pin
- * @param miso  The number of the digital MISO-pin
- * @param clk   The number of the digital SCLK-pin
- * @param cs    The number of the digital CS-pin
- * @param mode  The SPI mode (one of the constants SPI_MODEx)
+ * @param mosi  		The number of the digital MOSI-pin
+ * @param miso  		The number of the digital MISO-pin
+ * @param clk   		The number of the digital SCLK-pin
+ * @param cs    		The number of the digital CS-pin
+ * @param mode  		The SPI mode (one of the constants SPI_MODEx)
+ * @param clock_speed	The clock frequency (default 1 MHz)
  *
  * @return The created SPI object for the access to the SPI bus
  */
-SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode) {
+SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, size_t clock_speed = 1000000); {
     SPI spi = new SPI;
 
     spi->mosi = mosi;
@@ -63,6 +64,7 @@ SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode) 
     spi->cs = cs;
     spi->cpha = mode & 0x01;
     spi->cpol = (mode & 0x02) >> 1;
+	spi->speed = clock_speed;
 
     init_pin(spi->mosi);
     init_pin(spi->miso, RP_IN);
@@ -70,6 +72,26 @@ SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode) 
     init_pin(spi->cs, spi->cpol ? RP_HIGH : RP_LOW);
 
     return spi;
+}
+
+/**
+ * @brief Create new SPI object based on pins older SPI, with
+ * new CS-pin
+ */
+SPI spi_init(SPI spi, uint8_t cs) {
+	SPI spi_r = new SPI;
+	
+	spi_r->mosi = spi->mosi;
+	spi_r->miso = spi->miso;
+	spi_r->clk = spi->clk;
+	spi_r->cs = cs;
+	spi_r->cpha = cpha;
+	spi_r->cpol = cpol;
+	spi_r->speed = spi->speed;
+	
+	init_pin(spi_r->cs, spi_r->cpol ? RP_HIGH, RP_LOW);
+	
+	return spi;
 }
 
 /**

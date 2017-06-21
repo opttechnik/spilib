@@ -28,6 +28,11 @@ typedef struct {
      * @brief SPI chip select pin (SS/CS/SYNC/STE/CSN/CSB) number
      */
     uint8_t     cs;
+	
+	/**
+	 * @brief The clock frequency
+	 */
+	size_t		speed;
 
     /**
      * @brief Phase parameter (CPHA)
@@ -46,15 +51,22 @@ typedef SPI *spi_t;
  * @brief Initialize SPI bus and create related SPI object for access
  * to the bus
  *
- * @param mosi  The number of the digital MOSI-pin
- * @param miso  The number of the digital MISO-pin
- * @param clk   The number of the digital SCLK-pin
- * @param cs    The number of the digital CS-pin
- * @param mode  The SPI mode (one of the constants SPI_MODEx)
+ * @param mosi  		The number of the digital MOSI-pin
+ * @param miso  		The number of the digital MISO-pin
+ * @param clk   		The number of the digital SCLK-pin
+ * @param cs    		The number of the digital CS-pin
+ * @param mode  		The SPI mode (one of the constants SPI_MODEx)
+ * @param clock_speed	The clock frequency (default 1 MHz)
  *
  * @return The created SPI object for the access to the SPI bus
  */
-SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, bool debug = false);
+SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, size_t clock_speed = 1000000);
+
+/**
+ * @brief Create new SPI object based on pins older SPI, with
+ * new CS-pin
+ */
+SPI spi_init(SPI spi, uint8_t cs);
 
 /**
  * @brief Send the data to the SPI bus

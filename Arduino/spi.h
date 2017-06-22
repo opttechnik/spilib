@@ -2,9 +2,9 @@
 #define SPI_H
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
+#include "Arduino.h"
 #else
-	#include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 // SPI mode
@@ -31,7 +31,8 @@ public:
 	 *
 	 * @return The created SPI object for the access to the SPI bus
 	 */
-	SPI(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, uint8_t order = MSBFIRST, size_t clock_speed = 1000000);
+	SPI(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode,
+			uint8_t order = MSBFIRST, size_t clock_speed = 1000000UL);
 
 	/**
 	 * @brief Create a new SPI object based on pins former SPI, with
@@ -64,45 +65,45 @@ public:
 	void read(void* buffer, size_t size);
 
 private:
-    /**
-     * @brief SPI master output pin (MOSI/SOMI/SDO/DO/DON/SO/MRSR) number
-     */
-    uint8_t     mosi;
+	/**
+	 * @brief SPI master output pin (MOSI/SOMI/SDO/DO/DON/SO/MRSR) number
+	 */
+	uint8_t mosi;
 
-    /**
-     * @brief SPI master input pin (MISO/SIMO/SDI/DI/DIN/SI/MTST) number
-     */
-    uint8_t     miso;
+	/**
+	 * @brief SPI master input pin (MISO/SIMO/SDI/DI/DIN/SI/MTST) number
+	 */
+	uint8_t miso;
 
-    /**
-     * @brief SPI clock pin (SCLK/CLK/SCK) number
-     */
-    uint8_t     clk;
+	/**
+	 * @brief SPI clock pin (SCLK/CLK/SCK) number
+	 */
+	uint8_t clk;
 
-    /**
-     * @brief SPI chip select pin (SS/CS/SYNC/STE/CSN/CSB) number
-     */
-    uint8_t     cs;
-	
+	/**
+	 * @brief SPI chip select pin (SS/CS/SYNC/STE/CSN/CSB) number
+	 */
+	uint8_t cs;
+
 	/**
 	 * @brief The clock frequency
 	 */
-	size_t		speed;
+	size_t speed;
 
-    /**
-     * @brief Clock phase (CPHA)
-     */
-    uint8_t     cpha : 1;
+	/**
+	 * @brief Clock phase (CPHA)
+	 */
+	uint8_t cpha :1;
 
-    /**
-     * @brief Clock polarity (CPOL)
-     */
-    uint8_t     cpol : 1;
-	
+	/**
+	 * @brief Clock polarity (CPOL)
+	 */
+	uint8_t cpol :1;
+
 	/**
 	 * @brief Byte order
 	 */
-	uint8_t		order : 1;
+	uint8_t order :1;
 
 	/**
 	 * @brief Initialize digital pin
@@ -111,7 +112,8 @@ private:
 	 * @param dir           Pin direction (INPUT/OUTPUT, default OUTPUT)
 	 * @param lvl           Initial level of the pin (LOW/HIGH, default HIGH)
 	 */
-	void initPin(uint8_t pin_number, uint8_t dir = OUTPUT, uint8_t lvl = HIGH) const;
+	void initPin(uint8_t pin_number, uint8_t dir = OUTPUT,
+			uint8_t lvl = HIGH) const;
 
 	/**
 	 * Suspend execution for a given time

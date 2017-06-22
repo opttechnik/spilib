@@ -15,8 +15,10 @@
  *
  * @return The created SPI object for the access to the SPI bus
  */
-SPI::SPI(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, uint8_t order, size_t clock_speed):
-	mosi(mosi), miso(miso), clk(clk), cs(cs), order(order), speed(clock_speed), cpha(mode & 0x01), cpol((mode & 0x02) >> 1) {
+SPI::SPI(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode,
+		uint8_t order, size_t clock_speed) :
+		mosi(mosi), miso(miso), clk(clk), cs(cs), order(order), speed(
+				clock_speed), cpha(mode & 0x01), cpol((mode & 0x02) >> 1) {
 
 	initPin(mosi);
 	initPin(miso, INPUT);
@@ -33,9 +35,10 @@ SPI::SPI(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, uint
  *
  * @return The new created SPI object
  */
-SPI::SPI(const SPI& spi, uint8_t cs):
-	mosi(spi.mosi), miso(spi.miso), clk(spi.clk), cs(cs), order(spi.order), speed(spi.speed), cpha(spi.cpha), cpol(spi.cpol) {
-	
+SPI::SPI(const SPI& spi, uint8_t cs) :
+		mosi(spi.mosi), miso(spi.miso), clk(spi.clk), cs(cs), order(spi.order), speed(
+				spi.speed), cpha(spi.cpha), cpol(spi.cpol) {
+
 	initPin(cs);
 }
 
@@ -48,9 +51,9 @@ SPI::SPI(const SPI& spi, uint8_t cs):
  */
 void SPI::initPin(uint8_t pin_number, uint8_t dir, uint8_t lvl) const {
 	pinMode(pin_number, dir);
-    if (dir == OUTPUT) {
-    	digitalWrite(pin_number, lvl);
-    }
+	if (dir == OUTPUT) {
+		digitalWrite(pin_number, lvl);
+	}
 }
 
 /**
@@ -62,7 +65,7 @@ void SPI::initPin(uint8_t pin_number, uint8_t dir, uint8_t lvl) const {
  * @param time	The suspend time in nanoseconds
  */
 void SPI::sleep_ns(size_t time) const {
-	double nop_time = 1000 / clockCyclesPerMicrosecond();		// Time of the NOP-instruction in nanoseconds
+	double nop_time = 1000 / clockCyclesPerMicrosecond();// Time of the NOP-instruction in nanoseconds
 	int nop_count = (time / nop_time) + 1;
 
 	for (int i = 0; i < nop_count; i++) {
@@ -88,7 +91,7 @@ void SPI::write(const void* data, size_t size) {
 	digitalWrite(cs, LOW);					// Start transmit (CS low)
 
 	for (size_t i = 0; i < size; i++) {
-		uint8_t b = ((uint8_t*)data)[i];
+		uint8_t b = ((uint8_t*) data)[i];
 
 		for (int j = 0; j < 8; j++) {
 
@@ -140,7 +143,7 @@ void SPI::read(void* buffer, size_t size) {
 
 	for (size_t i = 0; i < size; i++) {
 
-		((uint8_t*)buffer)[i] = 0;
+		((uint8_t*) buffer)[i] = 0;
 
 		for (int j = 0; j < 8; j++) {
 
@@ -150,9 +153,9 @@ void SPI::read(void* buffer, size_t size) {
 
 			if (cpha == 0) {
 				if (order == MSBFIRST) {
-					((uint8_t*)buffer)[i] |= digitalRead(miso) << (7 - j);
+					((uint8_t*) buffer)[i] |= digitalRead(miso) << (7 - j);
 				} else {
-					((uint8_t*)buffer)[i] |= digitalRead(miso) << j;
+					((uint8_t*) buffer)[i] |= digitalRead(miso) << j;
 				}
 			}
 
@@ -162,9 +165,9 @@ void SPI::read(void* buffer, size_t size) {
 
 			if (cpha == 1) {
 				if (order == MSBFIRST) {
-					((uint8_t*)buffer)[i] |= digitalRead(miso) << (7 - j);
+					((uint8_t*) buffer)[i] |= digitalRead(miso) << (7 - j);
 				} else {
-					((uint8_t*)buffer)[i] |= digitalRead(miso) << j;
+					((uint8_t*) buffer)[i] |= digitalRead(miso) << j;
 				}
 			}
 

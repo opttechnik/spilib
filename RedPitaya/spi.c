@@ -32,7 +32,7 @@ int sleep_ns(size_t time) {
 
     if (time > MAX_NANO_TIME) {
         t.tv_sec = time / MAX_NANO_TIME;
-        time %= 999999999;
+        time %= MAX_NANO_TIME;
     } else {
         t.tv_sec = 0;
     }
@@ -40,6 +40,19 @@ int sleep_ns(size_t time) {
     t.tv_nsec = time;
 
     return nanosleep(&t, &t2);
+}
+
+/**
+ * @brief Suspend execution for a given microseconds
+ *
+ * @param time The suspend time in microseconds
+ *
+ * @return 0 on successfully sleeping, otherwise one from constants:
+ *			EINTR	Interrupted by a signal
+ *			EINVAL	Not correct time value (>1000000)
+ */
+int sleep_ms(size_t time) {
+	return usleep(time);
 }
 
 /**
@@ -68,8 +81,8 @@ SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, 
 
     init_pin(spi->mosi);
     init_pin(spi->miso, RP_IN);
-    init_pin(spi->clk);
-    init_pin(spi->cs, spi->cpol ? RP_HIGH : RP_LOW);
+    init_pin(spi->clk, spi->cpol ? RP_HIGH : RP_LOW);
+    init_pin(spi->cs);
 
     return spi;
 }
@@ -89,7 +102,7 @@ SPI spi_init(SPI spi, uint8_t cs) {
 	spi_r->cpol = cpol;
 	spi_r->speed = spi->speed;
 	
-	init_pin(spi_r->cs, spi_r->cpol ? RP_HIGH, RP_LOW);
+	init_pin(spi_r->cs);
 	
 	return spi;
 }
@@ -104,9 +117,9 @@ SPI spi_init(SPI spi, uint8_t cs) {
  * @return
  */
 void spi_write(SPI spi, void* data, size_t size) {
-    rp_DpinSetState(spi->cs, spi->cpol ? RP_LOW : RP_HIGH);
+    rp_DpinSetState(spi->cs, RP_LOW);
 
     // ...
 
-    rp_DpinSetState(spi->cs, spi->cpol ? RP_HIGH : RP_LOW);
+    rp_DpinSetState(spi->cs, RP_HIGH);
 }

@@ -64,11 +64,12 @@ int sleep_ms(size_t time) {
  * @param clk   		The number of the digital SCLK-pin
  * @param cs    		The number of the digital CS-pin
  * @param mode  		The SPI mode (one of the constants SPI_MODEx)
+ * @param order			The byte order
  * @param clock_speed	The clock frequency (default 1 MHz)
  *
  * @return The created SPI object for the access to the SPI bus
  */
-SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, size_t clock_speed = 1000000); {
+SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, uint8_t order, size_t clock_speed = 1000000); {
     SPI spi = new SPI;
 
     spi->mosi = mosi;
@@ -77,6 +78,7 @@ SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, 
     spi->cs = cs;
     spi->cpha = mode & 0x01;
     spi->cpol = (mode & 0x02) >> 1;
+	spi->order = order;
 	spi->speed = clock_speed;
 
     init_pin(spi->mosi);
@@ -88,8 +90,13 @@ SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, 
 }
 
 /**
- * @brief Create new SPI object based on pins older SPI, with
+ * @brief Create a new SPI object based on pins former SPI, with
  * new CS-pin
+ *
+ * @param spi	The SPI object
+ * @param cs	The number of new CS-pin
+ 
+ * @return The new created SPI object
  */
 SPI spi_init(SPI spi, uint8_t cs) {
 	SPI spi_r = new SPI;
@@ -100,6 +107,7 @@ SPI spi_init(SPI spi, uint8_t cs) {
 	spi_r->cs = cs;
 	spi_r->cpha = cpha;
 	spi_r->cpol = cpol;
+	spi_r->order = order;
 	spi_r->speed = spi->speed;
 	
 	init_pin(spi_r->cs);
@@ -122,4 +130,17 @@ void spi_write(SPI spi, void* data, size_t size) {
     // ...
 
     rp_DpinSetState(spi->cs, RP_HIGH);
+}
+
+/**
+ * @brief Receive data from the SPI bus
+ *
+ * @param spi		The SPI object
+ * @param buffer	The buffer to store readed data
+ * @param size		Number of bytes to read
+ *
+ * @return
+ */
+void spi_read(SPI spi, void* buffer, size_t size) {
+	
 }

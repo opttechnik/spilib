@@ -1,11 +1,15 @@
 #ifndef SPI_H
 #define SPI_H
 
-// SPI modes
+// SPI mode
 #define     SPI_MODE1       0x00        // CPOL = 0, CPHA = 0
 #define     SPI_MODE2       0x01        // CPOL = 0, CPHA = 1
 #define     SPI_MODE3       0x02        // CPOL = 1, CPHA = 0
 #define     SPI_MODE4       0x03        // CPOL = 1, CPHA = 1
+
+// Byte order
+#define		MSBFIRST		0x00
+#define		LSBFIRST		0x01
 
 // SPI settings struct
 typedef struct {
@@ -35,14 +39,19 @@ typedef struct {
 	size_t		speed;
 
     /**
-     * @brief Phase parameter (CPHA)
+     * @brief Clock phase (CPHA)
      */
     uint8_t     cpha : 1;
 
     /**
-     * @brief polarity parameter (CPOL)
+     * @brief Clock polarity (CPOL)
      */
     uint8_t     cpol : 1;
+	
+	/**
+	 * @brief Byte order
+	 */
+	uint8_t		order : 1;
 } spi_t;
 
 typedef SPI *spi_t;
@@ -56,15 +65,21 @@ typedef SPI *spi_t;
  * @param clk   		The number of the digital SCLK-pin
  * @param cs    		The number of the digital CS-pin
  * @param mode  		The SPI mode (one of the constants SPI_MODEx)
+ * @param order			The byte order
  * @param clock_speed	The clock frequency (default 1 MHz)
  *
  * @return The created SPI object for the access to the SPI bus
  */
-SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, size_t clock_speed = 1000000);
+SPI spi_init(uint8_t mosi, uint8_t miso, uint8_t clk, uint8_t cs, uint8_t mode, uint8_t order = MSBFIRST, size_t clock_speed = 1000000);
 
 /**
- * @brief Create new SPI object based on pins older SPI, with
+ * @brief Create a new SPI object based on pins former SPI, with
  * new CS-pin
+ *
+ * @param spi	The SPI object
+ * @param cs	The number of new CS-pin
+ 
+ * @return The new created SPI object
  */
 SPI spi_init(SPI spi, uint8_t cs);
 
@@ -79,6 +94,15 @@ SPI spi_init(SPI spi, uint8_t cs);
  */
 void spi_write(SPI spi, void* data, size_t size);
 
-void spi_read();
+/**
+ * @brief Receive data from the SPI bus
+ *
+ * @param spi		The SPI object
+ * @param buffer	The buffer to store readed data
+ * @param size		Number of bytes to read
+ *
+ * @return
+ */
+void spi_read(SPI spi, void* buffer, size_t size);
 
 #endif // SPI_H
